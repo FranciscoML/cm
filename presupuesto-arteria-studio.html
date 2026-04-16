@@ -1,0 +1,1585 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Presupuesto de Proyecto — Colonial Market</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400yfamily=DM+Sans:wght@300;400;500;600yfamily=DM+Mono:wght@400;500ydisplay=swap" rel="stylesheet">
+<style>
+  /* ── DESIGN TOKENS ───────────────────────────── */
+  :root {
+    --ink: #0e0d0b;
+    --paper: #f5f0e8;
+    --gold: #c9953a;
+    --gold-light: #e8c97a;
+    --red: #b03a2e;
+    --muted: #6a6050;
+    --rule: #d4c9b0;
+    --white: #fefcf8;
+    --section-bg: #1a1712;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  /* ── BASE ────────────────────────────────────── */
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    font-size: 1rem;
+    line-height: 1.65;
+  }
+
+  /* ── COVER ───────────────────────────────────── */
+  .cover {
+    min-height: 100svh;
+    background: var(--section-bg);
+    display: grid;
+    grid-template-rows: 1fr auto;
+    padding: clamp(32px, 6vw, 60px);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .cover::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 60% 40% at 80% 20%, rgba(201,149,58,0.12) 0%, transparent 60%),
+      radial-gradient(ellipse 40% 60% at 20% 80%, rgba(176,58,46,0.08) 0%, transparent 60%);
+  }
+
+  .cover-grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(201,149,58,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(201,149,58,0.04) 1px, transparent 1px);
+    background-size: 60px 60px;
+  }
+
+  .cover-body {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .cover-eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 32px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  .cover-eyebrow::before {
+    content: '';
+    display: block;
+    width: 40px;
+    height: 1px;
+    background: var(--gold);
+    flex-shrink: 0;
+  }
+
+  .cover-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem;
+    font-weight: 400;
+    color: rgba(245,240,232,0.5);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: clamp(40px, 8vw, 80px);
+  }
+
+  .cover-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(44px, 9vw, 88px);
+    font-weight: 900;
+    line-height: 0.95;
+    color: var(--paper);
+    margin-bottom: 8px;
+  }
+
+  .cover-title em {
+    font-style: italic;
+    color: var(--gold-light);
+  }
+
+  .cover-subtitle {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(22px, 4vw, 48px);
+    font-weight: 400;
+    font-style: italic;
+    color: rgba(245,240,232,0.45);
+    margin-bottom: clamp(32px, 6vw, 60px);
+  }
+
+  .cover-meta {
+    display: flex;
+    gap: clamp(20px, 4vw, 48px);
+    flex-wrap: wrap;
+  }
+
+  .cover-meta-item {
+    border-top: 1px solid rgba(201,149,58,0.3);
+    padding-top: 12px;
+    min-width: 140px;
+  }
+
+  .cover-meta-label {
+    font-family: 'DM Mono', monospace;
+    font-size: .8rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 4px;
+  }
+
+  .cover-meta-value {
+    font-size: 1rem;
+    color: var(--paper);
+    font-weight: 500;
+  }
+
+  .cover-footer {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    border-top: 1px solid rgba(201,149,58,0.2);
+    padding-top: 20px;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  .cover-footer-left,
+  .cover-footer-right {
+    font-family: 'DM Mono', monospace;
+    font-size: .8rem;
+    color: rgba(245,240,232,0.3);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+
+  /* ── CONFIDENTIAL BANNER ─────────────────────── */
+  .confidential-banner {
+    background: var(--red);
+    color: white;
+    font-family: 'DM Mono', monospace;
+    font-size: .8rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    text-align: center;
+    padding: 9px;
+  }
+
+  /* ── PAGE WRAPPER ────────────────────────────── */
+  .page {
+    max-width: 1240px;
+    margin: 0 auto;
+    padding: clamp(32px, 5vw, 64px) clamp(16px, 5vw, 60px);
+  }
+
+  /* ── SECTION HEADER ──────────────────────────── */
+  .section-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+    margin-bottom: 32px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid var(--ink);
+    flex-wrap: wrap;
+  }
+
+  .section-num {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(48px, 8vw, 72px);
+    font-weight: 900;
+    line-height: 1;
+    color: var(--rule);
+    flex-shrink: 0;
+    margin-top: -6px;
+  }
+
+  .section-info {
+    flex: 1;
+    min-width: 200px;
+    padding-top: 6px;
+  }
+
+  .section-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: .8rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 6px;
+  }
+
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(22px, 3.5vw, 28px);
+    font-weight: 700;
+    line-height: 1.1;
+    color: var(--ink);
+  }
+
+  .section-desc {
+    margin-top: 8px;
+    color: var(--muted);
+    font-size: .9rem;
+    line-height: 1.55;
+  }
+
+  /* ── TABLE SCROLL WRAPPER ────────────────────── */
+  .table-scroll {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    margin-bottom: 8px;
+    /* Subtle scroll shadow hints */
+    background:
+      linear-gradient(to right, var(--paper) 30%, transparent),
+      linear-gradient(to left,  var(--paper) 30%, transparent) right,
+      linear-gradient(to right, var(--rule), transparent) 0 0 / 8px 100%,
+      linear-gradient(to left,  var(--rule), transparent) right 0 / 8px 100%;
+    background-repeat: no-repeat;
+    background-attachment: local, local, scroll, scroll;
+    border-radius: 2px;
+  }
+
+  /* Scroll hint label */
+  .scroll-hint {
+    display: none;
+    font-family: 'DM Mono', monospace;
+    font-size: .8rem;
+    color: var(--muted);
+    letter-spacing: 0.12em;
+    text-align: right;
+    margin-bottom: 6px;
+  }
+
+  @media (max-width: 700px) {
+    .scroll-hint { display: block; }
+  }
+
+  /* ── BUDGET TABLE ────────────────────────────── */
+  .budget-table {
+    width: 100%;
+    min-width: 620px;   /* triggers horizontal scroll on narrow screens */
+    border-collapse: collapse;
+  }
+
+  .budget-table thead tr {
+    background: var(--section-bg);
+  }
+
+  .budget-table th {
+    font-family: 'DM Mono', monospace;
+    font-size: .8rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--gold);
+    padding: 12px 16px;
+    text-align: left;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
+  .budget-table th.th-right { text-align: right; }
+
+  .budget-table tbody tr {
+    border-bottom: 1px solid var(--rule);
+    transition: background 0.12s;
+  }
+
+  .budget-table tbody tr:hover {
+    background: rgba(201,149,58,0.05);
+  }
+
+  .budget-table td {
+    padding: 14px 16px;
+    vertical-align: top;
+  }
+
+  /* First column: description */
+  .budget-table td:first-child {
+    min-width: 260px;
+  }
+
+  .item-name {
+    font-weight: 600;
+    font-size: 1rem;
+    color: var(--ink);
+    margin-bottom: 4px;
+  }
+
+  .item-desc {
+    font-size: .9rem;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+
+  .item-tag {
+    display: inline-block;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 2px 7px;
+    border-radius: 2px;
+    margin-top: 5px;
+    margin-right: 2px;
+  }
+
+  .tag-design     { background: rgba(201,149,58,0.12); color: var(--gold); }
+  .tag-dev        { background: rgba(46,89,176,0.1);   color: #2e59b0; }
+  .tag-marketing  { background: rgba(58,130,74,0.1);   color: #3a824a; }
+  .tag-btl        { background: rgba(176,58,46,0.1);   color: var(--red); }
+  .tag-strategy   { background: rgba(120,80,140,0.1);  color: #78508c; }
+  .tag-production { background: rgba(0,130,120,0.1);   color: #008278; }
+
+  .col-qty, .col-unit, .col-price, .col-total {
+    white-space: nowrap;
+    font-family: 'DM Mono', monospace;
+    font-size: .9rem;
+    color: var(--ink);
+    text-align: right;
+  }
+
+  .col-qty  { text-align: center; }
+
+  .col-total {
+    font-weight: 700;
+    font-size: 1rem;
+  }
+
+  .subtotal-row td {
+    background: rgba(14,13,11,0.045);
+    padding: 12px 16px;
+    border-top: 2px solid var(--ink);
+    border-bottom: none;
+  }
+
+  .subtotal-label {
+    font-family: 'DM Mono', monospace;
+    font-size: .8rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 600;
+  }
+
+  .subtotal-amount {
+    font-family: 'DM Mono', monospace;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--ink);
+    text-align: right;
+    display: block;
+  }
+
+  /* ── BREAKDOWN GRID ──────────────────────────── */
+  .breakdown-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1px;
+    background: var(--rule);
+    border: 1px solid var(--rule);
+    margin: 40px 0;
+  }
+
+  .breakdown-card {
+    background: var(--white);
+    padding: 20px;
+  }
+
+  .breakdown-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 30px;
+    font-weight: 900;
+    color: var(--ink);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .breakdown-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 12px;
+  }
+
+  .breakdown-amount {
+    font-family: 'DM Mono', monospace;
+    font-size: .9rem;
+    font-weight: 600;
+    color: var(--ink);
+  }
+
+  .breakdown-bar {
+    height: 3px;
+    background: var(--rule);
+    margin-top: 12px;
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .breakdown-fill {
+    height: 100%;
+    border-radius: 2px;
+  }
+
+  /* ── GRAND TOTAL ─────────────────────────────── */
+  .grand-total-block {
+    background: var(--section-bg);
+    padding: clamp(28px, 5vw, 48px);
+    position: relative;
+    overflow: hidden;
+    margin-top: 48px;
+  }
+
+  .grand-total-block::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 50% 80% at 90% 50%, rgba(201,149,58,0.1) 0%, transparent 60%);
+  }
+
+  .grand-total-inner {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 40px;
+    align-items: end;
+  }
+
+  @media (max-width: 620px) {
+    .grand-total-inner { grid-template-columns: 1fr; }
+    .grand-total-amounts { text-align: left; }
+  }
+
+  .grand-total-label {
+    font-family: 'DM Mono', monospace;
+    font-size: .8rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 12px;
+  }
+
+  .grand-total-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(18px, 3vw, 22px);
+    font-weight: 700;
+    color: var(--paper);
+    margin-bottom: 6px;
+  }
+
+  .grand-total-note {
+    font-size: 1rem;
+    color: rgba(245,240,232,0.4);
+    line-height: 1.7;
+  }
+
+  .grand-total-amounts { text-align: right; }
+
+  .amount-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 40px;
+    margin-bottom: 8px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(201,149,58,0.15);
+  }
+
+  .amount-row:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+
+  .amount-label {
+    font-family: 'DM Mono', monospace;
+    font-size: .8rem;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    color: rgba(245,240,232,0.45);
+    white-space: nowrap;
+  }
+
+  .amount-value {
+    font-family: 'DM Mono', monospace;
+    font-size: 1rem;
+    color: var(--paper);
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
+  .amount-value.highlight {
+    font-size: 30px;
+    font-weight: 700;
+    color: var(--gold-light);
+  }
+
+  /* ── NOTES ───────────────────────────────────── */
+  .note-box {
+    border-left: 3px solid var(--gold);
+    padding: 13px 18px;
+    background: rgba(201,149,58,0.05);
+    margin-bottom: 12px;
+    font-size: 13.5px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  .note-box strong { color: var(--ink); font-weight: 600; }
+
+  /* ── TERMS ───────────────────────────────────── */
+  .terms-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(330px, 1fr));
+    gap: 24px;
+    margin-top: 40px;
+  }
+
+  .term-block {
+    border-top: 2px solid var(--ink);
+    padding-top: 14px;
+  }
+
+  .term-title {
+    font-family: 'DM Mono', monospace;
+    font-size: .8rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 8px;
+  }
+
+  .term-content {
+    font-size: 13.5px;
+    color: var(--muted);
+    line-height: 1.65;
+  }
+
+  .term-content strong { color: var(--ink); font-weight: 600; }
+
+  /* ── PAGE BREAK DIVIDER ──────────────────────── */
+  .page-break {
+    border-top: 1px solid var(--rule);
+    margin: 52px 0 44px;
+    position: relative;
+  }
+
+  .page-break::before {
+    content: attr(data-label);
+    position: absolute;
+    top: -9px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--paper);
+    padding: 0 14px;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--rule);
+    white-space: nowrap;
+  }
+
+  /* ── SIGNATURE ───────────────────────────────── */
+  .signature-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 48px;
+    margin-top: 40px;
+  }
+
+  @media (max-width: 480px) {
+    .signature-grid { grid-template-columns: 1fr; }
+  }
+
+  .signature-line {
+    border-top: 1px solid var(--ink);
+    padding-top: 8px;
+  }
+
+  .signature-label {
+    font-family: 'DM Mono', monospace;
+    font-size: .8rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  /* ── WATERMARK ───────────────────────────────── */
+  .watermark {
+    position: fixed;
+    bottom: 40px;
+    right: 40px;
+    font-family: 'DM Mono', monospace;
+    font-size: 8px;
+    color: rgba(14,13,11,0.08);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    transform: rotate(-90deg);
+    transform-origin: right bottom;
+    pointer-events: none;
+  }
+
+  /* ── RESPONSIVE ──────────────────────────────── */
+  @media (max-width: 700px) {
+    .cover { padding: 28px 20px; }
+    .page  { padding: 28px 16px; }
+    .section-num { font-size: 42px; }
+    .grand-total-block { padding: 24px 20px; }
+    .breakdown-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  @media (max-width: 440px) {
+    .breakdown-grid { grid-template-columns: 1fr; }
+    .cover-meta { flex-direction: column; gap: 16px; }
+  }
+
+  /* ══════════════════════════════════════════════
+     PRINT — Black y White, Markdown-style clean
+  ══════════════════════════════════════════════ */
+  @media print {
+    /* Reset screen-only chrome */
+    * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+
+    body {
+      background: #fff !important;
+      color: #000 !important;
+      font-size: 11pt;
+      font-family: Georgia, 'Times New Roman', serif;
+      line-height: 1.5;
+    }
+
+    /* Hide decorative y interactive elements */
+    .cover-grid,
+    .cover::before,
+    .cover::after,
+    .breakdown-bar,
+    .breakdown-fill,
+    .confidential-banner,
+    .watermark,
+    .page-break::before,
+    .scroll-hint { display: none !important; }
+
+    /* Cover — simplified */
+    .cover {
+      background: #fff !important;
+      min-height: auto;
+      padding: 24pt 32pt;
+      border-bottom: 3pt solid #000;
+      page-break-after: always;
+    }
+
+    .cover-logo {
+      color: #000 !important;
+      font-family: Georgia, serif;
+      letter-spacing: 0;
+      font-size: 10pt;
+      margin-bottom: 32pt;
+      border-bottom: 1pt solid #000;
+      padding-bottom: 8pt;
+    }
+
+    .cover-eyebrow { color: #000 !important; font-family: monospace; font-size: 9pt; }
+    .cover-eyebrow::before { background: #000 !important; }
+
+    .cover-title { color: #000 !important; font-size: 36pt; font-family: Georgia, serif; }
+    .cover-title em { color: #000 !important; font-style: italic; }
+    .cover-subtitle { color: #555 !important; font-size: 18pt; font-family: Georgia, serif; }
+
+    .cover-meta { gap: 16pt; }
+    .cover-meta-item { border-top: 1pt solid #000 !important; padding-top: 6pt; }
+    .cover-meta-label { color: #000 !important; font-size: 8pt; font-family: monospace; }
+    .cover-meta-value { color: #000 !important; font-size: 11pt; }
+
+    .cover-footer { border-top: 1pt solid #ccc !important; }
+    .cover-footer-left, .cover-footer-right { color: #666 !important; font-size: 8pt; font-family: monospace; }
+
+    /* Page */
+    .page { padding: 16pt 32pt; max-width: 100%; }
+
+    /* Section headers — markdown H2 style */
+    .section-header {
+      border-bottom: 2pt solid #000 !important;
+      margin-bottom: 14pt;
+      padding-bottom: 10pt;
+      page-break-inside: avoid;
+    }
+
+    .section-num { color: #ccc !important; font-size: 40pt; }
+    .section-tag { color: #000 !important; font-family: monospace; font-size: 8pt; }
+    .section-title { color: #000 !important; font-size: 18pt; font-family: Georgia, serif; }
+    .section-desc { color: #444 !important; font-size: 10pt; }
+
+    /* Table scroll wrapper — remove scroll, just let it flow */
+    .table-scroll {
+      overflow: visible !important;
+      background: none !important;
+    }
+
+    /* Tables — clean markdown-style */
+    .budget-table {
+      min-width: unset !important;
+      width: 100% !important;
+      border-collapse: collapse;
+      font-size: 10pt;
+      page-break-inside: auto;
+    }
+
+    .budget-table thead tr { background: #000 !important; }
+
+    .budget-table th {
+      color: #fff !important;
+      background: #000 !important;
+      font-family: monospace;
+      font-size: 8pt;
+      padding: 6pt 8pt;
+      letter-spacing: 0;
+      border: 1pt solid #000;
+    }
+
+    .budget-table td {
+      padding: 7pt 8pt;
+      border: 1pt solid #999;
+      color: #000 !important;
+      background: #fff !important;
+    }
+
+    .budget-table tbody tr { border-bottom: 1pt solid #ccc !important; }
+    .budget-table tbody tr:hover { background: #fff !important; }
+
+    .item-name { font-size: 10pt; font-weight: bold; color: #000 !important; }
+    .item-desc { font-size: 9pt; color: #333 !important; }
+
+    .item-tag {
+      background: none !important;
+      color: #000 !important;
+      border: 1pt solid #999;
+      font-family: monospace;
+      font-size: 7pt;
+    }
+
+    .col-qty, .col-unit, .col-price, .col-total {
+      color: #000 !important;
+      font-family: monospace;
+      font-size: 10pt;
+    }
+
+    .subtotal-row td {
+      background: #eee !important;
+      border-top: 2pt solid #000 !important;
+    }
+
+    .subtotal-label { color: #000 !important; font-family: monospace; font-size: 9pt; }
+    .subtotal-amount { color: #000 !important; font-family: monospace; font-size: 12pt; }
+
+    /* Breakdown grid — simple list in print */
+    .breakdown-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0;
+      background: #000 !important;
+      border: 1pt solid #000 !important;
+    }
+
+    .breakdown-card {
+      background: #fff !important;
+      border: none;
+      padding: 10pt;
+    }
+
+    .breakdown-num { color: #000 !important; font-size: 20pt; font-family: Georgia, serif; }
+    .breakdown-label { color: #555 !important; font-family: monospace; font-size: 7pt; }
+    .breakdown-amount { color: #000 !important; font-family: monospace; font-size: 10pt; }
+
+    /* Grand total block */
+    .grand-total-block {
+      background: #000 !important;
+      padding: 20pt 24pt;
+      page-break-inside: avoid;
+      margin-top: 24pt;
+    }
+
+    .grand-total-block::before { display: none; }
+    .grand-total-inner { grid-template-columns: 1fr auto; gap: 24pt; }
+    .grand-total-label { color: #ccc !important; font-family: monospace; font-size: 8pt; }
+    .grand-total-title { color: #fff !important; font-family: Georgia, serif; font-size: 14pt; }
+    .grand-total-note { color: #aaa !important; font-size: 9pt; }
+
+    .amount-label { color: #aaa !important; font-family: monospace; font-size: 8pt; }
+    .amount-value { color: #fff !important; font-family: monospace; font-size: 11pt; }
+    .amount-value.highlight { color: #fff !important; font-size: 22pt; }
+    .amount-row { border-bottom-color: rgba(255,255,255,0.15) !important; }
+
+    /* Notes */
+    .note-box {
+      border-left: 3pt solid #000 !important;
+      background: #f5f5f5 !important;
+      color: #333 !important;
+      font-size: 9pt;
+      page-break-inside: avoid;
+    }
+
+    .note-box strong { color: #000 !important; }
+
+    /* Terms */
+    .term-block { border-top: 2pt solid #000 !important; page-break-inside: avoid; }
+    .term-title { color: #000 !important; font-family: monospace; font-size: 8pt; }
+    .term-content { color: #333 !important; font-size: 9.5pt; }
+    .term-content strong { color: #000 !important; }
+
+    /* Dividers */
+    .page-break { border-top: 1pt dashed #ccc !important; margin: 20pt 0 16pt; }
+
+    /* Signatures */
+    .signature-line { border-top: 1pt solid #000 !important; }
+    .signature-label { color: #333 !important; font-family: monospace; font-size: 8pt; }
+
+    /* Footer */
+    .page > div:last-of-type { border-top: 1pt solid #ccc !important; }
+
+    /* Page breaks between modules */
+    .section-header { page-break-before: auto; }
+    .grand-total-block { page-break-before: always; }
+  }
+</style>
+</head>
+<body>
+
+<!-- COVER PAGE -->
+<div class="cover">
+  <div class="cover-grid"></div>
+  <div class="cover-body">
+    <div class="cover-logo">Arteria Studio — Propuesta Comercial</div>
+    <div class="cover-eyebrow">Presupuesto de Proyecto · Ref. AS-CM-2026-001</div>
+    <h1 class="cover-title">Colonial<br><em>Market</em></h1>
+    <div class="cover-subtitle">Estrategia de Relanzamiento 360°</div>
+    <div class="cover-meta">
+      <div class="cover-meta-item">
+        <div class="cover-meta-label">Cliente</div>
+        <div class="cover-meta-value">Colonial Market — Bellavista, Callao</div>
+      </div>
+      <div class="cover-meta-item">
+        <div class="cover-meta-label">Fecha</div>
+        <div class="cover-meta-value">Abril 2026</div>
+      </div>
+      <div class="cover-meta-item">
+        <div class="cover-meta-label">Duración estimada</div>
+        <div class="cover-meta-value">6 meses</div>
+      </div>
+      <div class="cover-meta-item">
+        <div class="cover-meta-label">Modalidad</div>
+        <div class="cover-meta-value">Arteria Studio · Anticipo + Fee mensual</div>
+      </div>
+    </div>
+  </div>
+  <div class="cover-footer">
+    <div class="cover-footer-left">Confidencial · Uso exclusivo del cliente · No distribuir</div>
+    <div class="cover-footer-right">v1.0 · Arteria Studio © 2026</div>
+  </div>
+</div>
+
+<div class="confidential-banner">Documento confidencial — Uso exclusivo del cliente</div>
+
+<!-- MAIN CONTENT -->
+<div class="page">
+
+  <!-- RESUMEN EJECUTIVO / BREAKDOWN VISUAL -->
+  <div style="margin: 40px 0 48px; padding: 32px 0; border-top: 2px solid var(--ink); border-bottom: 1px solid var(--rule);">
+    <div class="section-tag" style="margin-bottom: 16px;">Resumen por macro-área</div>
+    <div class="breakdown-grid">
+      <div class="breakdown-card">
+        <div class="breakdown-num">01</div>
+        <div class="breakdown-label">Identidad y Marca</div>
+        <div class="breakdown-amount">S/. 12,200</div>
+        <div class="breakdown-bar"><div class="breakdown-fill" style="width:100%; background:#c9953a;"></div></div>
+      </div>
+      <div class="breakdown-card">
+        <div class="breakdown-num">02</div>
+        <div class="breakdown-label">Ecosistema Digital</div>
+        <div class="breakdown-amount">S/. 25,500</div>
+        <div class="breakdown-bar"><div class="breakdown-fill" style="width:100%; background:#2e59b0;"></div></div>
+      </div>
+      <div class="breakdown-card">
+        <div class="breakdown-num">03</div>
+        <div class="breakdown-label">Activaciones BTL</div>
+        <div class="breakdown-amount">S/. 0,0</div>
+        <div class="breakdown-bar"><div class="breakdown-fill" style="width:100%; background:#b03a2e;"></div></div>
+      </div>
+      <div class="breakdown-card">
+        <div class="breakdown-num">04</div>
+        <div class="breakdown-label">Gestión y Reportes</div>
+        <div class="breakdown-amount">S/. 0,0</div>
+        <div class="breakdown-bar"><div class="breakdown-fill" style="width:100%; background:#78508c;"></div></div>
+      </div>
+      <div class="breakdown-card">
+        <div class="breakdown-num">05</div>
+        <div class="breakdown-label">Tecnología y CRM</div>
+        <div class="breakdown-amount">S/. 2,500</div>
+        <div class="breakdown-bar"><div class="breakdown-fill" style="width:100%; background:#3a824a;"></div></div>
+      </div>
+      <div class="breakdown-card">
+        <div class="breakdown-num">06</div>
+        <div class="breakdown-label">Contenido y PR</div>
+        <div class="breakdown-amount">S/. 9,600</div>
+        <div class="breakdown-bar"><div class="breakdown-fill" style="width:100%; background:#008278;"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- MÓDULO 01: IDENTIDAD y MARCA -->
+  <!-- ═══════════════════════════════════════════ -->
+  <div class="section-header">
+    <div class="section-num">01</div>
+    <div class="section-info">
+      <div class="section-tag">Módulo · Fundación creativa</div>
+      <div class="section-title">Identidad y Marca</div>
+      <div class="section-desc">Sistema visual completo, señalética física, diseño de fachada y producción gráfica. Base de todo el ecosistema "Emprendedores y Cultura".</div>
+    </div>
+  </div>
+
+  <div class="scroll-hint">← Desliza para ver →</div>
+  <div class="table-scroll">
+  <table class="budget-table">
+    <thead>
+      <tr>
+        <th style="width:60%">Entregable / Servicio</th>
+        <th style="width:12%; text-align:center;">Unidad</th>
+        <th style="width:8%; text-align:center;">Cant.</th>
+        <th style="width:10%; text-align:right;" class="th-right">P. Unitario</th>
+        <th style="width:10%; text-align:right;" class="th-right">Total S/.</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>
+          <div class="item-name">Manual de Marca y Sistema Visual</div>
+          <div class="item-desc">Logotipo principal + variantes, paleta cromática, tipografía, iconografía, guía de uso digital/impreso. Entregable en AI + PDF + archivos master</div>
+          <span class="item-tag tag-design">Diseño</span>
+        </td>
+        <td class="col-qty">Proyecto</td>
+        <td class="col-qty">1</td>
+        <td class="col-price">1,200</td>
+        <td class="col-total">1,200</td>
+      </tr>
+      <tr>
+        <td>
+          <div class="item-name">Realización Creativa</div>
+          <div class="item-desc">Campañas mensuales por eventos festivos y/o activaciones dentro del local, además de social media. Insight y concepto creativo, KV, estrategia visual y digital.</div>
+          <span class="item-tag tag-strategy">Estrategia</span>
+        </td>
+        <td class="col-qty">Mes</td>
+        <td class="col-qty">6</td>
+        <td class="col-price">1,500</td>
+        <td class="col-total">9,000</td>
+      </tr>
+      <tr>
+        <td>
+          <div class="item-name">Propuesta visual</div>
+          <div class="item-desc">Renovación de branding de todo el mall, señaletica, pendones, publicidad, etc. Listo para cotizar con un proveedor de imprenta.</div>
+          <span class="item-tag tag-design">Diseño</span>
+          <span class="item-tag tag-production">Arte final</span>
+        </td>
+        <td class="col-qty">Proyecto</td>
+        <td class="col-qty">1</td>
+        <td class="col-price">2,000</td>
+        <td class="col-total">2,000</td>
+      </tr>
+      <tr>
+        <td>
+          <div class="item-name">Producción Imprenta (coordinación) *</div>
+          <div class="item-desc">Gestión de proveedores de impresión, control de color, aprobación de pruebas. Aplica a material de lanzamiento. Costos de imprenta no incluidos (se cotizan por separado).</div>
+          <span class="item-tag tag-design">Diseño</span>
+        </td>
+        <td class="col-qty">Servicio</td>
+        <td class="col-qty">1</td>
+        <td class="col-price">0</td>
+        <td class="col-total">0</td>
+      </tr>
+      <tr class="subtotal-row">
+        <td colspan="4"><span class="subtotal-label">Subtotal Módulo 01 — Identidad y Marca</span></td>
+        <td><span class="subtotal-amount">12,200</span></td>
+      </tr>
+    </tbody>
+  </table>
+  </div><!-- /table-scroll -->
+
+  <div class="page-break" data-label="Módulo 02"></div>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- MÓDULO 02: ECOSISTEMA DIGITAL -->
+  <!-- ═══════════════════════════════════════════ -->
+  <div class="section-header">
+    <div class="section-num">02</div>
+    <div class="section-info">
+      <div class="section-tag">Módulo · Presencia online</div>
+      <div class="section-title">Ecosistema Digital</div>
+      <div class="section-desc">Website corporativo, landing pages de campaña, gestión de redes sociales, pauta digital, SEO y Google Business. El hub digital del relanzamiento.</div>
+    </div>
+  </div>
+
+  <div class="scroll-hint">← Desliza para ver →</div>
+  <div class="table-scroll">
+  <table class="budget-table">
+    <thead>
+      <tr>
+        <th style="width:60%">Entregable / Servicio</th>
+        <th style="width:12%; text-align:center;">Unidad</th>
+        <th style="width:8%; text-align:center;">Cant.</th>
+        <th style="width:10%; text-align:right;" class="th-right">P. Unitario</th>
+        <th style="width:10%; text-align:right;" class="th-right">Total S/.</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>
+          <div class="item-name">Website Corporativo</div>
+          <div class="item-desc">Diseño UI/UX, desarrollo website, responsive, SEO on-page, mapa del sitio, integración Google Maps, directorio de locatarios, formulario de contacto.</div>
+          <span class="item-tag tag-dev">Desarrollo</span>
+        </td>
+        <td class="col-qty">Proyecto</td>
+        <td class="col-qty">1</td>
+        <td class="col-price">2,500</td>
+        <td class="col-total">2,500</td>
+      </tr>
+      <tr>
+        <td>
+          <div class="item-name">Landing Pages de Campaña</div>
+          <div class="item-desc">Diseño y desarrollo de 2 landing pages específicas: Convocatoria Emprendedores y Eventos/Actividades. Con pixel tracking, formularios y conexión a CRM/email.</div>
+          <span class="item-tag tag-dev">Desarrollo</span>
+          <span class="item-tag tag-marketing">Marketing</span>
+        </td>
+        <td class="col-qty">Landing</td>
+        <td class="col-qty">2</td>
+        <td class="col-price">800</td>
+        <td class="col-total">1,600</td>
+      </tr>
+      <tr>
+        <td>
+          <div class="item-name">Gestión de Redes Sociales</div>
+          <div class="item-desc">Estrategia de contenido mensual, calendario editorial, diseño de piezas (08 posts y 08 videos/mes), copywriting, moderación. Plataformas: TikTok, Instagram, Facebook. Por 6 meses.</div>
+          <span class="item-tag tag-marketing">Social Media</span>
+        </td>
+        <td class="col-qty">Mes</td>
+        <td class="col-qty">6</td>
+        <td class="col-price">2,000</td>
+        <td class="col-total">12,000</td>
+      </tr>
+      <tr>
+        <td>
+          <div class="item-name">Producción de Contenido para RRSS</div>
+          <div class="item-desc">Videos cortos (Reels/TikTok/Short 4/mes), fotografía mensual in-situ, stories. Incluye edición. Por 6 meses.</div>
+          <span class="item-tag tag-production">Producción</span>
+          <span class="item-tag tag-marketing">Contenido</span>
+        </td>
+        <td class="col-qty">Mes</td>
+        <td class="col-qty">6</td>
+        <td class="col-price">1,200</td>
+        <td class="col-total">7,200</td>
+      </tr>
+      <tr>
+        <td>
+          <div class="item-name">Google Ads (Search + Display)</div>
+          <div class="item-desc">Setup Google Ads, campañas de búsqueda local, campañas de display para branding, remarketing. Fee de gestión mensual. Presupuesto de pauta no incluido.</div>
+          <span class="item-tag tag-marketing">Medios pagados</span>
+        </td>
+        <td class="col-qty">Mes</td>
+        <td class="col-qty">6</td>
+        <td class="col-price">200</td>
+        <td class="col-total">1,200</td>
+      </tr>
+      <tr>
+        <td>
+          <div class="item-name">SEO Local y Google Business Profile</div>
+          <div class="item-desc">Optimización GBP, gestión de reseñas, publicaciones semanales, fotos, Q y A. SEO local on-page, schema markup, formulario para prospectos. Por 6 meses.</div>
+          <span class="item-tag tag-marketing">SEO</span>
+        </td>
+        <td class="col-qty">Proyecto</td>
+        <td class="col-qty">2</td>
+        <td class="col-price">500</td>
+        <td class="col-total">1,000</td>
+      </tr>
+      <tr class="subtotal-row">
+        <td colspan="4"><span class="subtotal-label">Subtotal Módulo 02 — Ecosistema Digital</span></td>
+        <td><span class="subtotal-amount">25,500</span></td>
+      </tr>
+    </tbody>
+  </table>
+  </div><!-- /table-scroll -->
+
+  <div class="page-break" data-label="Módulo 03"></div>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- MÓDULO 03: ACTIVACIONES BTL -->
+  <!-- ═══════════════════════════════════════════ -->
+  <div class="section-header">
+    <div class="section-num">03</div>
+    <div class="section-info">
+      <div class="section-tag">Módulo · Experiencia presencial</div>
+      <div class="section-title">Activaciones BTL</div>
+      <div class="section-desc">Evento de Relanzamiento, activaciones recurrentes, campaña de emprendedores protagonistas y convocatoria de nuevos locatarios. El lado humano de la estrategia.</div>
+    </div>
+  </div>
+
+  <div class="scroll-hint">← Desliza para ver →</div>
+  <div class="table-scroll">
+  <table class="budget-table">
+    <thead>
+      <tr>
+        <th style="width:60%">Entregable / Servicio</th>
+        <th style="width:12%; text-align:center;">Unidad</th>
+        <th style="width:8%; text-align:center;">Cant.</th>
+        <th style="width:10%; text-align:right;" class="th-right">P. Unitario</th>
+        <th style="width:10%; text-align:right;" class="th-right">Total S/.</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>
+          <div class="item-name">Evento de Relanzamiento Público</div>
+          <div class="item-desc">Concepción creativa y producción ejecutiva. Incluye brief creativo, plan de activación día-evento y gestión de invitados. Costos de proveedores externos (catering, artistas) se cotizan por separado.</div>
+          <span class="item-tag tag-btl">BTL</span>
+          <span class="item-tag tag-production">Producción</span>
+        </td>
+        <td class="col-qty">Evento</td>
+        <td class="col-qty">1</td>
+        <td class="col-price">0</td>
+        <td class="col-total">0</td>
+      </tr>
+      <tr>
+        <td>
+          <div class="item-name">Activaciones Mensuales en el Mercado</div>
+          <div class="item-desc">Creatividad de activaciones experienciales recurrentes: talleres, ferias temáticas, concursos, días especiales. Incluye concepto y artes. 1 activación/mes durante 6 meses.</div>
+          <span class="item-tag tag-btl">BTL</span>
+        </td>
+        <td class="col-qty">Activación</td>
+        <td class="col-qty">6</td>
+        <td class="col-price">0</td>
+        <td class="col-total">0</td>
+      </tr>
+      <tr>
+        <td>
+          <div class="item-name">Convocatoria de Nuevos Locatarios <sup><small>1</small></sup></div>
+          <div class="item-desc">Estrategia de comunicación B2B, diseño de dossier de locatario, landing page de convocatoria, formulario de postulación, campaña de difusión segmentada (Facebook/Instagram + WhatsApp), 3 meses de campaña activa.</div>
+          <span class="item-tag tag-marketing">Marketing</span>
+          <span class="item-tag tag-strategy">Estrategia</span>
+        </td>
+        <td class="col-qty">Proyecto</td>
+        <td class="col-qty">1</td>
+        <td class="col-price">0</td>
+        <td class="col-total">0</td>
+      </tr>
+    </tbody>
+  </table>
+  </div><!-- /table-scroll -->
+
+  <div class="page-break" data-label="Módulo 04"></div>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- MÓDULO 04: GESTIÓN y REPORTES -->
+  <!-- ═══════════════════════════════════════════ -->
+  <div class="section-header">
+    <div class="section-num">04</div>
+    <div class="section-info">
+      <div class="section-tag">Módulo · Dirección y control</div>
+      <div class="section-title">Gestión, Dirección y Reportes</div>
+      <div class="section-desc">Estrategia y dirección creativa, reportes de métricas, reuniones de alineamiento y soporte continuo al equipo de marketing interno del cliente.</div>
+    </div>
+  </div>
+
+  <div class="scroll-hint">← Desliza para ver →</div>
+  <div class="table-scroll">
+  <table class="budget-table">
+    <thead>
+      <tr>
+        <th style="width:60%">Entregable / Servicio</th>
+        <th style="width:12%; text-align:center;">Unidad</th>
+        <th style="width:8%; text-align:center;">Cant.</th>
+        <th style="width:10%; text-align:right;" class="th-right">P. Unitario</th>
+        <th style="width:10%; text-align:right;" class="th-right">Total S/.</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>
+          <div class="item-name">Estrategia General y Dirección Creativa</div>
+          <div class="item-desc">Documento de estrategia maestro, posicionamiento de marca, journey del visitante, roadmap de ejecución 6 meses, KPIs y OKRs por área. Revisión trimestral.</div>
+          <span class="item-tag tag-strategy">Estrategia</span>
+        </td>
+        <td class="col-qty">Proyecto</td>
+        <td class="col-qty">1</td>
+        <td class="col-price">0</td>
+        <td class="col-total">0</td>
+      </tr>
+      <tr>
+        <td>
+          <div class="item-name">Reportes de Métricas Mensuales *</div>
+          <div class="item-desc">Dashboard de KPIs (redes, web, paid media, GBP), análisis de resultados vs objetivos, recomendaciones ejecutivas. Formato PDF ejecutivo + acceso a dashboard en tiempo real (Google Looker Studio). Por 6 meses.</div>
+          <span class="item-tag tag-strategy">Analítica</span>
+        </td>
+        <td class="col-qty">Reunión</td>
+        <td class="col-qty">6</td>
+        <td class="col-price">0</td>
+        <td class="col-total">0</td>
+      </tr>
+      <tr>
+        <td>
+          <div class="item-name">Reuniones de Alineamiento *</div>
+          <div class="item-desc">Reuniones mensuales de revisión de resultados y planificación (1h, formato híbrido). Incluye preparación de agenda, presentación ejecutiva y acta de acuerdos. Por 6 meses.</div>
+          <span class="item-tag tag-strategy">Gestión</span>
+        </td>
+        <td class="col-qty">Reunión</td>
+        <td class="col-qty">6</td>
+        <td class="col-price">0</td>
+        <td class="col-total">0</td>
+      </tr>
+      <tr>
+        <td>
+          <div class="item-name">Soporte al Área de Marketing Interna *</div>
+          <div class="item-desc">Horas de consultoría y soporte técnico para el equipo interno del cliente: capacitaciones, revisión de materiales, guías de uso. Hasta 6h/mes. Por 6 meses.</div>
+          <span class="item-tag tag-strategy">Consultoría</span>
+        </td>
+        <td class="col-qty">Mes</td>
+        <td class="col-qty">6</td>
+        <td class="col-price">0</td>
+        <td class="col-total">0</td>
+      </tr>
+      <tr class="subtotal-row">
+        <td colspan="4"><span class="subtotal-label">Subtotal Módulo 04 — Gestión y Reportes</span></td>
+        <td><span class="subtotal-amount">0</span></td>
+      </tr>
+    </tbody>
+  </table>
+  </div><!-- /table-scroll -->
+
+  <div class="page-break" data-label="Módulo 05"></div>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- MÓDULO 05: TECNOLOGÍA y CRM (valor añadido) -->
+  <!-- ═══════════════════════════════════════════ -->
+  <div class="section-header">
+    <div class="section-num">05</div>
+    <div class="section-info">
+      <div class="section-tag">Módulo · Automatización y datos</div>
+      <div class="section-title">Tecnología, CRM y Automatización</div>
+      <div class="section-desc">Infraestructura digital de captación, seguimiento y fidelización. CRM, email marketing, WhatsApp automatizado y tracking de leads para locatarios y visitantes.</div>
+    </div>
+  </div>
+
+  <div class="scroll-hint">← Desliza para ver →</div>
+  <div class="table-scroll">
+  <table class="budget-table">
+    <thead>
+      <tr>
+        <th style="width:60%">Entregable / Servicio</th>
+        <th style="width:12%; text-align:center;">Unidad</th>
+        <th style="width:8%; text-align:center;">Cant.</th>
+        <th style="width:10%; text-align:right;" class="th-right">P. Unitario</th>
+        <th style="width:10%; text-align:right;" class="th-right">Total S/.</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>
+          <div class="item-name">Implementación CRM <sup><small>3</small></sup></div>
+          <div class="item-desc">Setup de CRM gratuito/básico, pipelines de locatarios y visitantes, integración con formularios web y landing pages, segmentación de bases. Capacitación al equipo.</div>
+          <span class="item-tag tag-dev">Tech</span>
+          <span class="item-tag tag-marketing">CRM</span>
+        </td>
+        <td class="col-qty">Mes</td>
+        <td class="col-qty">5</td>
+        <td class="col-price">200</td>
+        <td class="col-total">1,000</td>
+      </tr>
+      <tr>
+        <td>
+          <div class="item-name">Email Marketing y Automatizaciones</div>
+          <div class="item-desc">Flujos automatizados de bienvenida, lead nurturing (locatarios), newsletter mensual para visitantes. Diseño de estructura, copywriting y configuración. Por 6 meses.</div>
+          <span class="item-tag tag-marketing">Email</span>
+        </td>
+        <td class="col-qty">Mes</td>
+        <td class="col-qty">5</td>
+        <td class="col-price">200</td>
+        <td class="col-total">1,000</td>
+      </tr>
+      <tr>
+        <td>
+          <div class="item-name">WhatsApp Business API + Chatbot</div>
+          <div class="item-desc">Setup de WhatsApp Business API, flujo conversacional básico para consultas de locatarios (horarios, vacantes, contacto). Mantenimiento 3 meses.</div>
+          <span class="item-tag tag-dev">Automatización</span>
+        </td>
+        <td class="col-qty">Proyecto</td>
+        <td class="col-qty">1</td>
+        <td class="col-price">500</td>
+        <td class="col-total">500</td>
+      </tr>
+      <tr>
+        <td>
+          <div class="item-name">Pixel Tracking y Analytics Setup</div>
+          <div class="item-desc">Instalación y configuración de Meta Pixel, Google Tag Manager, GA4, eventos personalizados. Dashboard de conversiones unificado.</div>
+          <span class="item-tag tag-dev">Tech</span>
+          <span class="item-tag tag-marketing">Analytics</span>
+        </td>
+        <td class="col-qty">Proyecto</td>
+        <td class="col-qty">1</td>
+        <td class="col-price">0</td>
+        <td class="col-total">0</td>
+      </tr>
+      <tr>
+        <td>
+          <div class="item-name">Mantenimiento Web Mensual</div>
+          <div class="item-desc">Actualizaciones website, backups, monitoreo de uptime, correcciones menores, optimización de velocidad. Por 6 meses.</div>
+          <span class="item-tag tag-dev">Mantenimiento</span>
+        </td>
+        <td class="col-qty">Mes</td>
+        <td class="col-qty">6</td>
+        <td class="col-price">0</td>
+        <td class="col-total">0</td>
+      </tr>
+      <tr class="subtotal-row">
+        <td colspan="4"><span class="subtotal-label">Subtotal Módulo 05 — Tecnología y CRM</span></td>
+        <td><span class="subtotal-amount">2,500</span></td>
+      </tr>
+    </tbody>
+  </table>
+  </div><!-- /table-scroll -->
+
+  <div class="page-break" data-label="Módulo 06"></div>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- MÓDULO 06: CONTENIDO y PR -->
+  <!-- ═══════════════════════════════════════════ -->
+  <div class="section-header">
+    <div class="section-num">06</div>
+    <div class="section-info">
+      <div class="section-tag">Módulo · Narrativa y visibilidad</div>
+      <div class="section-title">Contenido Editorial y PR</div>
+      <div class="section-desc">Estrategia de contenido de largo plazo, blog, podcast/video serie, relaciones con medios y posicionamiento de Colonial Market como referente cultural del Callao.</div>
+    </div>
+  </div>
+
+  <div class="scroll-hint">← Desliza para ver →</div>
+  <div class="table-scroll">
+  <table class="budget-table">
+    <thead>
+      <tr>
+        <th style="width:60%">Entregable / Servicio</th>
+        <th style="width:12%; text-align:center;">Unidad</th>
+        <th style="width:8%; text-align:center;">Cant.</th>
+        <th style="width:10%; text-align:right;" class="th-right">P. Unitario</th>
+        <th style="width:10%; text-align:right;" class="th-right">Total S/.</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>
+          <div class="item-name">Blog y SEO de Contenidos</div>
+          <div class="item-desc">Estrategia de contenido SEO, producción de 2 artículos/mes optimizados para búsquedas locales (emprendedores Callao, mercados Lima, gastronomía, etc.). Por 6 meses.</div>
+          <span class="item-tag tag-marketing">SEO Content</span>
+        </td>
+        <td class="col-qty">Mes</td>
+        <td class="col-qty">6</td>
+        <td class="col-price">300</td>
+        <td class="col-total">1,800</td>
+      </tr>
+      <tr>
+        <td>
+          <div class="item-name">Gestión de Reputación Online</div>
+          <div class="item-desc">Monitoreo de menciones, gestión de reseñas en Google/Facebook/TripAdvisor, respuesta a comentarios negativos, estrategia de obtención de reseñas positivas. Por 6 meses.</div>
+          <span class="item-tag tag-marketing">Reputación</span>
+        </td>
+        <td class="col-qty">Mes</td>
+        <td class="col-qty">6</td>
+        <td class="col-price">100</td>
+        <td class="col-total">600</td>
+      </tr>
+      <tr>
+        <td>
+          <div class="item-name">Newsletter de Comunidad</div>
+          <div class="item-desc">Newsletter mensual para visitantes y comunidad del mercado: novedades, eventos, historias de emprendedores. Diseño, copy y distribución. Por 6 meses.</div>
+          <span class="item-tag tag-marketing">Email</span>
+        </td>
+        <td class="col-qty">Mes</td>
+        <td class="col-qty">6</td>
+        <td class="col-price">200</td>
+        <td class="col-total">1,200</td>
+      </tr>
+      <tr class="subtotal-row">
+        <td colspan="4"><span class="subtotal-label">Subtotal Módulo 06 — Contenido y PR</span></td>
+        <td><span class="subtotal-amount">3,600</span></td>
+      </tr>
+    </tbody>
+  </table>
+  </div><!-- /table-scroll -->
+  
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- GRAND TOTAL -->
+  <!-- ═══════════════════════════════════════════ -->
+  <div class="grand-total-block">
+    <div class="grand-total-inner">
+      <div>
+        <div class="grand-total-label">Resumen financiero del proyecto</div>
+        <div class="grand-total-title">Inversión Total del Proyecto<br>Colonial Market — Relanzamiento 360°</div>
+        <div class="grand-total-note" style="margin-top: 16px;">Duración: 6 meses · 6 módulos · Arteria Studio</div>
+      </div>
+      <div class="grand-total-amounts">
+        <div class="amount-row">
+          <span class="amount-label">01 Identidad y Marca</span>
+          <span class="amount-value">S/. 12,200</span>
+        </div>
+        <div class="amount-row">
+          <span class="amount-label">02 Ecosistema Digital</span>
+          <span class="amount-value">S/. 25,500</span>
+        </div>
+        <div class="amount-row">
+          <span class="amount-label">03 Activaciones BTL</span>
+          <span class="amount-value">S/. 0,00</span>
+        </div>
+        <div class="amount-row">
+          <span class="amount-label">04 Gestión y Reportes</span>
+          <span class="amount-value">S/. 0,00</span>
+        </div>
+        <div class="amount-row">
+          <span class="amount-label">05 Tecnología y CRM</span>
+          <span class="amount-value">S/. 2,500</span>
+        </div>
+        <div class="amount-row">
+          <span class="amount-label">06 Contenido y PR</span>
+          <span class="amount-value">S/. 3,600</span>
+        </div>
+        <div class="amount-row" style="border-top: 1px solid rgba(201,149,58,0.4); padding-top:16px; margin-top:8px;">
+          <span class="amount-label">Subtotal</span>
+          <span class="amount-value">S/. 43,800</span>
+        </div>
+        <div class="amount-row">
+          <span class="amount-label">Fee agencia 14%</span>
+          <span class="amount-value">S/. 6,132</span>
+        </div>
+        <div class="amount-row">
+          <span class="amount-label">IGV 18%</span>
+          <span class="amount-value">S/. 8,987.76</span>
+        </div>
+        <div class="amount-row" style="border-top: 2px solid var(--gold); padding-top:16px; margin-top:8px;">
+          <span class="amount-label">TOTAL PROYECTO</span>
+          <span class="amount-value highlight">S/. 58,919.76</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- NOTAS IMPORTANTES -->
+  <!-- ═══════════════════════════════════════════ -->
+  <div style="margin-top: 48px;">
+    <div class="section-tag" style="margin-bottom: 16px;">Notas y Exclusiones importantes</div>
+    <div class="note-box">
+      <sup><small>1</small></sup> <strong>Costos de pauta publicitaria (ad spend):</strong> Los presupuestos de Meta Ads y Google Ads son gestionados por la agencia pero facturados directamente al cliente. Se recomendará el monto mínimo por los servicios mencionados por los primeros 3 meses.
+    </div>
+    <div class="note-box">
+      <sup><small>2</small></sup> <strong>Costos de producción física:</strong> Los costos de imprenta, fabricación de señalética, materiales de activación, catering, artistas y proveedores de infraestructura para el evento son adicionales y se cotizan por separado.
+    </div>
+    <div class="note-box">
+      <sup><small>3</small></sup> <strong>Licencias y suscripciones de terceros:</strong> Servidor, dominio, herramientas de email marketing, herramientas de programación, licencias de software no están incluidas en los fees de agencia. Se detallarán en propuesta técnica.
+    </div>
+    <div class="note-box">
+      <sup><small>4</small></sup> <strong>Modularidad:</strong> Este presupuesto puede contratarse por módulos o en su totalidad. Se recomienda contratar los módulos en su totalidad para garantizar coherencia de la estrategia y flujo de trabajo.
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- TÉRMINOS y CONDICIONES -->
+  <!-- ═══════════════════════════════════════════ -->
+  <div class="page-break" data-label="Términos"></div>
+  <div class="section-tag" style="margin-bottom: 24px;">Términos comerciales y condiciones</div>
+  <div class="terms-grid">
+    <div class="term-block">
+      <div class="term-title">Forma de Pago</div>
+      <div class="term-content">
+        <strong>40%</strong> al inicio del proyecto.<br>
+        <strong>60%</strong> restante prorrateado en cuotas mensuales, distribuidas en los 5 meses siguientes.<br>
+      </div>
+    </div>
+    <div class="term-block">
+      <div class="term-title">Validez de la Propuesta</div>
+      <div class="term-content">
+        Esta propuesta tiene validez de <strong>30 días calendario</strong> a partir de la fecha de emisión. Pasado este plazo, los precios y disponibilidad quedan sujetos a revisión.
+      </div>
+    </div>
+    <div class="term-block">
+      <div class="term-title">Revisiones Incluidas</div>
+      <div class="term-content">
+        Cada entregable incluye hasta <strong>2 rondas de cambios</strong> sin costo adicional.
+      </div>
+    </div>
+    <div class="term-block">
+      <div class="term-title">Propiedad Intelectual</div>
+      <div class="term-content">
+        La propiedad de todos los entregables se transfiere al cliente una vez efectuado el <strong>pago total</strong> del proyecto. Durante el desarrollo, los activos son propiedad de Arteria Studio.
+      </div>
+    </div>
+    <div class="term-block">
+      <div class="term-title">Responsabilidades del Cliente</div>
+      <div class="term-content">
+        El cliente se compromete a proveer accesos, información y aprobaciones en un plazo máximo de <strong>5 días hábiles</strong>. Retrasos en aprobaciones pueden afectar los tiempos de entrega.
+      </div>
+    </div>
+  </div>
+
+  <!-- FIRMA -->
+  <div class="signature-grid" style="margin-top: 48px;">
+    <div>
+      <div class="signature-line">
+        <div class="signature-label">Firma — Arteria Studio</div>
+      </div>
+      <div style="margin-top: 24px; font-size: 1rem; color: var(--muted);">
+        Arteria Studio S.A.C.<br>
+        Arteria Studio · Lima, Perú<br>
+        +51 993 751 251
+      </div>
+    </div>
+    <div>
+      <div class="signature-line">
+        <div class="signature-label">Firma — Cliente / Colonial Market</div>
+      </div>
+      <div style="margin-top: 24px; font-size: 1rem; color: var(--muted);">
+        Nombre: _______________________<br>
+        Cargo: ________________________<br>
+        Fecha: ________________________
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div style="margin-top: 64px; padding-top: 24px; border-top: 1px solid var(--rule); display:flex; justify-content:space-between; align-items:center;">
+    <div style="font-family:'DM Mono',monospace; font-size:9px; color:var(--muted); letter-spacing:0.15em; text-transform:uppercase;">
+      Arteria Studio · Ref. AS-CM-2026-001 · Confidencial
+    </div>
+    <div style="font-family:'DM Mono',monospace; font-size:9px; color:var(--muted);">
+      Abril 2026
+    </div>
+  </div>
+
+</div>
+
+<div class="watermark">AD-CM-2026-001 · Arteria Studio · Confidencial</div>
+
+</body>
+</html>
